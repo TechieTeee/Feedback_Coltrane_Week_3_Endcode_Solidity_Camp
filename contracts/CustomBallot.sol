@@ -24,14 +24,19 @@ contract CustomBallot {
     IERC20Votes public voteToken;
     uint256 public referenceBlock;
 
+    // contract address of our deployed MyToken to be initialize here to ERC20Vote interfacee;
     constructor(bytes32[] memory proposalNames, address _voteToken) {
         for (uint256 i = 0; i < proposalNames.length; i++) {
             proposals.push(Proposal({name: proposalNames[i], voteCount: 0}));
+            voteToken = IERC20Votes(_voteToken);
+            referenceBlock = block.number;
         }
-        voteToken = IERC20Votes(_voteToken);
-        referenceBlock = block.number;
     }
 
+    // voter gives a proposal to vote on and amount of votes
+    // voter must have enough votes to give this amount
+    // their spent votes and the proposal votes increase
+    // thier votingPower is then decreased
     function vote(uint256 proposal, uint256 amount) external {
         uint256 votingPowerAvailable = votingPower();
         require(votingPowerAvailable >= amount, "Has not enough voting power");

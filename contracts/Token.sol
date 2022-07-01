@@ -9,21 +9,23 @@ import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Votes.sol";
 contract MyToken is ERC20, AccessControl, ERC20Permit, ERC20Votes {
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
+    // calls the parent constructors with necessary arguments
     constructor() ERC20("MyToken", "MTK") ERC20Permit("MyToken") {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(MINTER_ROLE, msg.sender);
     }
 
+    // restrict access to mint function
     function mint(address to, uint256 amount) public onlyRole(MINTER_ROLE) {
-        _mint(to, amount);
+        mint(to, amount);
     }
 
-    // The following functions are overrides required by Solidity.
-
-    function _afterTokenTransfer(address from, address to, uint256 amount)
-        internal
-        override(ERC20, ERC20Votes)
-    {
+    // required overrides as we are inheriting same function from multiple places
+    function _afterTokenTransfer(
+        address from,
+        address to,
+        uint256 amount
+    ) internal override(ERC20, ERC20Votes) {
         super._afterTokenTransfer(from, to, amount);
     }
 
