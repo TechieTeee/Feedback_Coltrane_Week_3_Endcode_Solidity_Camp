@@ -27,9 +27,10 @@ const config: HardhatUserConfig = {
   paths: { tests: "tests" },
   networks: {
     ropsten: {
-      url: process.env.ROPSTEN_URL || "",
-      accounts:
-        process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
+      url: `https://ropsten.infura.io/v3/4f44e76800504135978ae3f6889f9c13`,
+      accounts: [
+        `0xce404277203e43642146399e2d5e6f7318fb952eeff10f41d058b2909fe47811`,
+      ],
     },
   },
   gasReporter: {
