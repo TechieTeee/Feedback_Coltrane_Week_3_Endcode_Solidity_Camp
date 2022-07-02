@@ -17,7 +17,7 @@ contract MyToken is ERC20, AccessControl, ERC20Permit, ERC20Votes {
 
     // restrict access to mint function
     function mint(address to, uint256 amount) public onlyRole(MINTER_ROLE) {
-        mint(to, amount);
+        _mint(to, amount);
     }
 
     // required overrides as we are inheriting same function from multiple places
