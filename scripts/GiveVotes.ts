@@ -9,6 +9,8 @@ const EXPOSED_KEY =
 
 const DEPLOYMENT_ADDRESS = "0x99e7c2f1f28c7f151Db0b8BFa41C98e2AE3C71b0";
 
+// CLI input should be receiving address, then token amount
+
 async function main() {
   // copy of wallet setup from deploy.ts
   const wallet = new ethers.Wallet(process.env.PRIVATE_KEY || EXPOSED_KEY);
@@ -30,14 +32,26 @@ async function main() {
   ) as MyToken;
 
   const receiver = process.argv[2];
-  const amount = parseInt(process.argv[3]);
+  const amount = ethers.utils.parseEther(parseInt(process.argv[3]).toFixed(18));
 
-  console.log(`Minting ${amount} to ${receiver}`);
+  console.log(`Minting ${ethers.utils.formatEther(amount)} to ${receiver}`);
 
   const mintTx = await tokenContract.mint(receiver, amount);
   console.log("Awaiting confirmation...");
   await mintTx.wait();
   console.log(`Tokens succesfully minted to ${receiver}`);
+
+  console.log(
+    `Delegating ${ethers.utils.formatEther(amount)} votes to ${receiver}...`
+  );
+
+  const delegateTx = await tokenContract.delegate(receiver);
+  await delegateTx.wait();
+  const postDelegateVotePower = ethers.utils.formatEther(
+    await tokenContract.getVotes(receiver)
+  );
+
+  console.log(`${postDelegateVotePower} votes delegated to ${receiver}`);
 }
 
 main().catch((error) => {
